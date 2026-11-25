@@ -5,6 +5,8 @@
 > **[“Fixing product design career paths with the Mirror Model”](https://uxdesign.cc/fixing-product-design-career-paths-with-the-mirror-model-76152b7e547)**, on UX Collective (Medium).
 > All credit for the model, its structure, level names and the original chart goes to him. Please read the original article for the full text and the high-resolution chart.
 
+**Live page:** https://jeffdoria.github.io/pd-career-mirror-model/
+
 ## What this is
 
 This repo is an interactive, bilingual (English / Portuguese) study version of the Mirror Model. I built it because English isn't my first language, and I wanted a way to go through the model zone by zone without losing the original terms or taking anything out of context.
