@@ -149,7 +149,10 @@ dialog.lb::backdrop{background:rgba(0,0,0,.6)}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,264px),1fr));gap:var(--s2)}
 .step{background:#fff;border-radius:16px;padding:var(--s2);display:flex;flex-direction:column;gap:var(--s2)}
 .step p{margin:0;font-size:16px;line-height:24px}
-.step .lvl{max-width:none}
+.step .lv{flex-direction:column;align-items:stretch}
+.step .arrow{display:none}
+.step .lvl{max-width:none;flex:none}
+.step .lvl .code{font-size:20px;line-height:24px}
 .lane.ea .step{background:#fff}
 </style>
 </head>
