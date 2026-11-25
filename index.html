@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mirror Model Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday learning, calm and exact; white page as requested
+   IDEA the original career-path wall chart, walked zone by zone
+   PICTURE each zone draws the two mirrored tracks: creative above, management below
+   COLOUR Figma palette: grey 100-700, secondary #064198, tertiary #fe6056/#da2707; berry #a8135a kept from the chart
+   TYPE Barlow Condensed for codes and titles, Inter for text; scale 14/16/24/32/48
+   LAYOUT 8-point grid; top bar, zone rail, horizontal snap panels, prev/next */
+:root{color-scheme:light;--s1:8px;--s2:16px;--s3:24px;--s4:32px;--s5:40px;--s6:48px;--s8:64px;
+--bg:#ffffff;--ink:#242424;--mute:#656565;--zone:#898989;--line:#d6d6d6;--soft:#f6f7ff;
+--blue:#064198;--blue-s:#cfd8fe;--cr:#a8135a;--cr-s:#fbe7f0;--mg:#fe6056;--mg-ink:#2b0200;--mg-t:#da2707;--mg-s:#fff0ef;--green:#1b7a4a;--focus:#0051e2}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/24px Inter,system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+h1,h2,h3,.code,.title,.zl{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;margin:0}
+.skip{position:absolute;left:var(--s2);top:-64px;background:var(--blue);color:#fff;padding:var(--s1) var(--s2);border-radius:8px;z-index:9}
+.skip:focus{top:var(--s1)}
+header{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2);align-items:center;justify-content:space-between;padding:var(--s1) max(var(--s2),3vw);background:var(--blue);color:#fff}
+.brand{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;line-height:32px;text-transform:uppercase}
+.seg{display:flex;gap:var(--s1);padding:4px;background:rgba(255,255,255,.14);border-radius:8px}
+.seg button{font:600 16px/24px Inter,sans-serif;background:none;color:#fff;border:0;border-radius:4px;min-width:48px;min-height:40px;padding:var(--s1) var(--s2);cursor:pointer}
+.seg button[aria-pressed=true]{background:#fff;color:var(--blue)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.seg button:focus-visible{outline-color:#fff}
+.rail{display:flex;gap:var(--s1);overflow-x:auto;padding:var(--s1) max(var(--s2),3vw);border-bottom:1px solid var(--line);scrollbar-width:none}
+.rail button{flex:none;font:600 14px/24px Inter,sans-serif;border:1px solid var(--line);background:var(--bg);color:var(--mute);border-radius:24px;padding:var(--s1) var(--s2);min-height:40px;cursor:pointer}
+.rail button:hover{border-color:var(--mute);color:var(--ink)}
+.rail button[aria-current=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.bar{height:4px;background:var(--soft)}.bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .3s}
+#track{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth}
+.panel{flex:0 0 100%;scroll-snap-align:start;overflow-y:auto;padding:var(--s4) max(var(--s2),4vw) var(--s5)}
+.inner{max-width:1184px;margin:0 auto}
+.zl{font-size:48px;line-height:48px;color:var(--zone);text-transform:uppercase}
+h1{font-size:clamp(32px,5vw,48px);line-height:1.17;color:var(--blue);text-transform:uppercase;margin-bottom:var(--s3)}
+h2{font-size:32px;line-height:40px;margin:var(--s1) 0 var(--s3);text-transform:uppercase}
+h3{font-size:24px;line-height:32px}
+.en,.pt{display:block}
+:root[data-lang=en] .pt{display:none}
+:root[data-lang=pt] .en{display:none}
+span.en,span.pt{display:inline}
+:root[data-lang=en] span.pt,:root[data-lang=pt] span.en{display:none}
+p{margin:0 0 var(--s2);max-width:68ch}
+.mirror{display:grid;gap:var(--s2)}
+.axis{display:flex;align-items:center;gap:var(--s2);color:var(--mute);font-size:14px;font-weight:600}
+.axis::before,.axis::after{content:"";flex:1;border-top:2px dashed var(--line)}
+.lane{border-radius:16px;padding:var(--s3);background:var(--soft);display:flex;flex-direction:column;gap:var(--s2);border:1px solid transparent}
+.lane.cr{background:var(--cr-s)}.lane.mg{background:var(--mg-s)}.lane.ea{background:#eef2ff}
+.lane .kind{font:600 14px/24px Inter,sans-serif;color:var(--mute)}
+.lane .title{font-size:24px;line-height:32px;text-transform:uppercase}
+.cr .title{color:var(--cr)}.mg .title{color:var(--mg-t)}.ea .title{color:var(--blue)}
+.lv{display:flex;flex-wrap:wrap;gap:var(--s1);align-items:center}
+.lvl{display:flex;flex-direction:column;border-radius:8px;overflow:hidden;flex:1 1 144px;max-width:232px;border:2px solid var(--c);background:#fff}
+.cr .lvl{--c:var(--cr)}.mg .lvl{--c:var(--mg)}.ea .lvl{--c:var(--blue)}.ea .lvl.in{--c:var(--green)}
+.lvl .code{padding:var(--s1) var(--s2);font-size:24px;line-height:32px;color:#fff;background:var(--c)}
+.lvl .code span{color:#fff}
+.mg .lvl .code span{color:var(--mg-ink)}
+.lvl .name{padding:var(--s1) var(--s2);font:600 14px/24px Inter,sans-serif;color:var(--ink)}
+.arrow{color:var(--mute);font-weight:700}
+.note{border:1px solid var(--line);border-radius:16px;padding:var(--s2) var(--s3);margin-top:var(--s3);background:#fff}
+.note strong{display:block;font-family:"Barlow Condensed",sans-serif;font-size:24px;line-height:32px;color:var(--blue);text-transform:uppercase;margin-bottom:var(--s1)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:var(--s3)}
+.cdo{background:var(--ink);color:#fff;border-radius:16px;padding:var(--s3);display:grid;gap:var(--s2);max-width:640px}
+.cdo .code{font-size:64px;line-height:64px}
+ul{margin:0;padding-left:var(--s3)}li{margin-bottom:var(--s1)}
+.mapw{overflow-x:auto;margin:var(--s3) 0}
+.map{display:grid;grid-template-columns:auto repeat(6,minmax(64px,1fr));gap:var(--s1);min-width:520px}
+.map div{padding:var(--s1);border-radius:8px;text-align:center;font-family:"Barlow Condensed",sans-serif;font-size:16px;line-height:24px;font-weight:700}
+.map .h{color:var(--mute);text-transform:uppercase}
+.map .c{background:var(--cr);color:#fff}.map .m{background:var(--mg);color:var(--mg-ink)}.map .e{background:var(--blue);color:#fff}.map .x{background:var(--ink);color:#fff}
+.map .lab{text-align:left;color:var(--mute);font-family:Inter,sans-serif;font-size:14px;font-weight:600}
+a{color:var(--blue);text-underline-offset:3px}
+.small{font-size:14px;line-height:24px;color:var(--mute)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);padding:var(--s1) max(var(--s2),3vw);border-top:1px solid var(--line)}
+.nav button{white-space:nowrap;font:600 16px/24px Inter,sans-serif;min-height:48px;padding:var(--s1) var(--s3);border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.nav button#next{background:var(--blue);color:#fff;border-color:var(--blue)}
+.nav button:hover:not(:disabled){border-color:var(--ink)}
+.nav button:disabled{opacity:.4;cursor:not-allowed}
+#pos{font-size:14px;color:var(--mute);text-align:center}
+@media(max-width:600px){.brand{font-size:20px;line-height:24px}.panel{padding-top:var(--s3)}.zl{font-size:40px;line-height:40px}h2{font-size:24px;line-height:32px}.lvl{max-width:none}.arrow{display:none}.nav button{padding:var(--s1) var(--s2)}}
+@media(prefers-reduced-motion:reduce){#track{scroll-behavior:auto}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#track"><span class="en">Skip to content</span><span class="pt">Pular para o conteúdo</span></a>
+<header>
+  <div class="brand"><span class="en">Product Design Career Paths: The Mirror Model</span><span class="pt">Carreiras em Product Design: o Mirror Model</span></div>
+  <div class="seg" role="group" aria-label="Language / Idioma">
+    <button id="l-en" data-l="en" lang="en">EN</button>
+    <button id="l-pt" data-l="pt" lang="pt-BR">PT</button>
+  </div>
+</header>
+<nav class="rail" id="rail" aria-label="Sections"></nav>
+<div class="bar" aria-hidden="true"><i id="prog"></i></div>
+<main id="track" tabindex="-1" aria-label="Mirror Model"></main>
+<div class="nav">
+  <button id="prev" aria-label="Previous section">← <span id="prevt">Prev</span></button>
+  <div id="pos" aria-live="polite"></div>
+  <button id="next" aria-label="Next section"><span id="nextt">Next</span> →</button>
+</div>
+<script>
+{
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const t=(en,pt,tag='span')=>(tag=/^\s*</.test(en)?'div':tag,`<${tag} class="en" lang="en">${en}</${tag}><${tag} class="pt" lang="pt-BR">${pt}</${tag}>`);
+const lvls=(list,cls='')=>`<div class="lv">${list.map((l,i)=>`${i?'<span class="arrow" aria-hidden="true">→</span>':''}<div class="lvl ${l[3]||''}"><span class="code"><span>${l[0]}</span></span><span class="name">${t(l[1],l[2])}</span></div>`).join('')}</div>`;
+const lane=(cls,kind,title,levels,body)=>`<section class="lane ${cls}"><div class="kind">${kind}</div><div class="title">${title}</div>${lvls(levels)}<div>${body}</div></section>`;
+const CR=t('Creative path (IC)','Trilha criativa (IC)'), MG=t('Management path','Trilha de gestão');
+
+const panels=[
+{id:'intro',nav:'Intro',np:'Início',html:`
+<h1 style="font-size:clamp(36px,5.5vw,58px);margin:0 0 12px">${t('Product Design Career Paths: The Mirror Model','Carreiras em Product Design: o Mirror Model')}</h1>
+${t('<p>A proposal by Ryan Ford (2022) to give creative designers a path to grow that is as long, as senior and as well paid as the management path. The two tracks mirror each other, level for level, all the way to Chief Design Officer.</p>','<p>Uma proposta de Ryan Ford (2022) para dar aos designers criativos um caminho de crescimento tão longo, sênior e bem remunerado quanto o de gestão. As duas trilhas se espelham, nível a nível, até o Chief Design Officer.</p>')}
+<div class="mapw"><div class="map" role="img" aria-label="Overview: creative (IC) and management (M) tracks across six zones, both ending at CDO">
+<div class="h"></div><div class="h">${t('Zone 1','Zona 1','span')}</div><div class="h">${t('Zone 2','Zona 2','span')}</div><div class="h">${t('Zone 3','Zona 3','span')}</div><div class="h">${t('Zone 4','Zona 4','span')}</div><div class="h">${t('Zone 5','Zona 5','span')}</div><div class="h">${t('Zone 6','Zona 6','span')}</div>
+<div class="lab">IC</div><div class="e" style="grid-row:span 2;display:grid;place-items:center">IC-1–4</div><div class="c">IC-5–6</div><div class="c">IC-7–8</div><div class="c">IC-D1–D2</div><div class="c">IC-F1–F3</div><div class="x" style="grid-row:span 2;display:grid;place-items:center">CDO</div>
+<div class="lab">M</div><div class="m">M-1–2</div><div class="m">M-3–4</div><div class="m">M-D1–D2</div><div class="m">M-VP1–3</div>
+</div></div>
+${t('<p class="small">Use the Prev and Next buttons, the section rail, swipe sideways, or the ← → keys. Switch between English and Portuguese at the top. Level names and zone titles follow the original chart; descriptions are summaries, with the full original linked in Credits.</p>','<p class="small">Use os botões Anterior e Próximo, a barra de seções, deslize para o lado ou as teclas ← →. Troque entre inglês e português no topo. Os nomes de níveis e zonas seguem o gráfico original; as descrições são resumos, e o original completo está linkado em Créditos.</p>')}`},
+
+{id:'problem',nav:'Problem',np:'Problema',html:`
+<p class="zl">${t('Why','Por quê','span')}</p><h2>${t('The problem: the creative path has a ceiling','O problema: a trilha criativa tem um teto')}</h2>
+<div class="grid2">
+<div>${t('<p>Designers want what any worker wants: new responsibilities, more impact, new challenges and more money. Careers usually split into an Individual Contributor (IC) path and a Manager path.</p><p>The IC path typically stops at <b>Principal</b>. To keep growing, a designer who loves the craft has to stop designing and manage. Many stall, or leave for another company.</p>','<p>Designers querem o que qualquer profissional quer: novas responsabilidades, mais impacto, novos desafios e mais dinheiro. A carreira costuma se dividir em uma trilha de Contribuidor Individual (IC) e uma de Gestão.</p><p>A trilha IC normalmente para no nível <b>Principal</b>. Para continuar crescendo, quem ama o ofício precisa parar de desenhar e virar gestor. Muitos estagnam ou trocam de empresa.</p>')}</div>
+<div>${t('<p><b>Startups:</b> the creative path effectively ends after Senior Principal, because career ladders are usually written by HR and managers, not designers.</p><p><b>Enterprises</b> replace titles with bands (e.g. IC6), but the design track still caps near the same point. Engineering often goes further, with extra senior IC levels for exceptional engineers.</p><p><b>The idea:</b> use engineering career paths as the template for Product Design.</p>','<p><b>Startups:</b> a trilha criativa praticamente termina depois de Senior Principal, porque as trilhas costumam ser escritas por RH e gestores, não por designers.</p><p><b>Grandes empresas</b> trocam cargos por bandas (ex.: IC6), mas a trilha de design ainda trava perto do mesmo ponto. Engenharia muitas vezes vai além, com níveis IC extras para engenheiros excepcionais.</p><p><b>A ideia:</b> usar as trilhas de engenharia como modelo para Product Design.</p>')}</div>
+</div>`},
+
+{id:'zone-1',nav:'Zone 1',np:'Zona 1',html:`
+<p class="zl">${t('Zone 1','Zona 1','span')}</p><h2>${t('Introduction &amp; early development','Introdução e desenvolvimento inicial')}</h2>
+${lane('ea',t('Shared start','Início comum'),t('One path for everyone','Um caminho para todos'),[['IC-1 / IC-2','Internships','Estágios','in'],['IC-3','Jr / Associate PD','PD Júnior / Associado'],['IC-4','Product Designer','Product Designer']],t('<p>Starts with an internship, ideally paid. New designers learn the discipline and grow their craft until they feel ready to choose which direction to focus on.</p>','<p>Começa com um estágio, de preferência remunerado. O designer aprende a disciplina e desenvolve o ofício até se sentir pronto para escolher em que direção focar.</p>'))}`},
+
+{id:'zone-2',nav:'Zone 2',np:'Zona 2',html:`
+<p class="zl">${t('Zone 2','Zona 2','span')}</p><h2>${t('Leadership begins: the paths split','A liderança começa: as trilhas se separam')}</h2>
+<div class="mirror">
+${lane('cr',CR,t('Creative leadership begins','Começa a liderança criativa'),[['IC-5','Senior PD','PD Sênior'],['IC-6','Lead / Staff PD','PD Lead / Staff']],t('<p>A proven designer, valuable enough to stay in a creativity-centred role. Your days are about design, not management, with some mentoring.</p>','<p>Um designer comprovado, valioso o bastante para continuar em um papel centrado na criatividade. Seu dia é sobre design, não gestão, com alguma mentoria.</p>'))}
+<div class="axis">${t('mirror','espelho')}</div>
+${lane('mg',MG,t('Managerial leadership begins','Começa a liderança de gestão'),[['M-1','Senior PD','PD Sênior'],['M-2','Lead / Staff PD','PD Lead / Staff']],t('<p>An explicit choice to manage, reflected in the title. Less hands-on design; more oversight, quality control, team structure and planning. You manage one team, sometimes just 1–2 designers.</p>','<p>Uma escolha explícita de gerir, refletida no cargo. Menos design na mão; mais supervisão, controle de qualidade, estrutura de time e planejamento. Você gere um time, às vezes só 1–2 designers.</p>'))}
+</div>
+<div class="note"><strong>${t('Mind-changing opportunities','Oportunidades de mudar de ideia')}</strong>${t('<p>Zone 2 allows moving between tracks. Someone can try management and find it is not for them, or stay IC and realise they want more mentoring. This already happens in practice, so the model plans for it.</p>','<p>Na Zona 2 é possível trocar de trilha. Alguém pode testar gestão e perceber que não é para si, ou seguir como IC e perceber que quer mais mentoria. Isso já acontece na prática, então o modelo prevê.</p>')}</div>`},
+
+{id:'zone-3',nav:'Zone 3',np:'Zona 3',html:`
+<p class="zl">${t('Zone 3','Zona 3','span')}</p><h2>${t('Mastery and focus','Maestria e foco')}</h2>
+<div class="mirror">
+${lane('cr',CR,t('Creative mastery','Maestria criativa'),[['IC-7','Principal PD','PD Principal'],['IC-8','Sr Principal PD','PD Principal Sênior']],t('<p>Among the most senior designers in the team or company. Fully focused on being creative and producing great design, trusted with the most important and innovative projects.</p>','<p>Entre os designers mais seniores do time ou da empresa. Totalmente focado em criar e produzir ótimo design, com os projetos mais importantes e inovadores.</p>'))}
+<div class="axis">${t('mirror','espelho')}</div>
+${lane('mg',MG,t('Focused management','Gestão focada'),[['M-3','Manager','Gerente'],['M-4','Sr Manager','Gerente Sênior']],t('<p>Mostly managing other designers. You may review and critique work but rarely make it. Success depends on the people you manage and mentor, and on the quality and timing of their work.</p>','<p>Principalmente gerindo outros designers. Você pode revisar e criticar o trabalho, mas raramente produz. O sucesso depende das pessoas que você gere e orienta, e da qualidade e do prazo do trabalho delas.</p>'))}
+</div>
+<div class="note"><strong>${t('Managing authority flows back across zones','A autoridade de gestão volta entre as zonas')}</strong>${t('<p>Zones also show who answers to whom: Zone 3 management is responsible for Zone 2 creative, and so on.</p>','<p>As zonas também mostram quem responde a quem: a gestão da Zona 3 é responsável pelo criativo da Zona 2, e assim por diante.</p>')}</div>`},
+
+{id:'zone-4',nav:'Zone 4',np:'Zona 4',html:`
+<p class="zl">${t('Zone 4','Zona 4','span')}</p><h2>${t('Beyond the old ceiling','Além do antigo teto')}</h2>
+<div class="mirror">
+${lane('cr',CR,t('Creative brilliance &amp; north star development','Brilho criativo e desenvolvimento da visão (north star)'),[['IC-D1','Distinguished PD','PD Distinguished'],['IC-D2','Sr Distinguished PD','PD Distinguished Sênior']],t('<p>A near-honorary title for deep mastery and a lifelong commitment to the craft. Relied on for creative strategy, mentoring, upskilling other designers and challenging the status quo.</p>','<p>Um título quase honorário para quem tem grande maestria e compromisso de vida com o ofício. É a referência em estratégia criativa, mentoria, capacitação de outros designers e em questionar o status quo.</p>'))}
+<div class="axis">${t('mirror','espelho')}</div>
+${lane('mg',MG,t('People and process strategy','Estratégia de pessoas e processos'),[['M-D1','Director','Diretor(a)'],['M-D2','Sr Director','Diretor(a) Sênior']],t('<p>You manage managers, plan execution and set the standards for how design is made and judged. You rarely design yourself. You hire (and fire), plan budgets and prepare the team for what comes next.</p>','<p>Você gere gestores, planeja a execução e define os padrões de como o design é feito e avaliado. Raramente desenha. Contrata (e demite), planeja orçamento e prepara o time para o que vem.</p>'))}
+</div>
+<div class="note"><strong>${t('Track first, then level','Primeiro a trilha, depois o nível')}</strong>${t('<p>Codes name the track before the level: M-D1 (Manager, Director 1) mirrors IC-D1 (Individual Contributor, Distinguished 1). Distinguished and Fellow are borrowed from engineering, so bands stay equivalent across functions.</p>','<p>Os códigos dizem a trilha antes do nível: M-D1 (Gestão, Diretor 1) espelha IC-D1 (Contribuidor Individual, Distinguished 1). Distinguished e Fellow vêm da engenharia, então as bandas são equivalentes entre áreas.</p>')}</div>`},
+
+{id:'zone-5',nav:'Zone 5',np:'Zona 5',html:`
+<p class="zl">${t('Zone 5','Zona 5','span')}</p><h2>${t('The how and the why','O como e o porquê')}</h2>
+<div class="mirror">
+${lane('cr',CR,t('Focused on “the how”','Foco no “como”'),[['IC-F1','PD Fellow','PD Fellow'],['IC-F2','Sr PD Fellow','PD Fellow Sênior'],['IC-F3','Exec. PD Fellow','PD Fellow Executivo']],t('<p>An honorary title for the highest mastery of the craft. Influences every design role, Directors and VPs included. Brings a rare perspective on design and a strong capacity to build tools.</p>','<p>Um título honorário para a mais alta maestria do ofício. Influencia todos os papéis de design, inclusive Diretores e VPs. Traz uma visão rara sobre design e grande capacidade de criar ferramentas.</p>'))}
+<div class="axis">${t('mirror','espelho')}</div>
+${lane('mg',MG,t('Focused on “the why”','Foco no “porquê”'),[['M-VP1','Vice President','Vice-presidente'],['M-VP2','Sr Vice President','Vice-presidente Sênior'],['M-VP3','Exec. Vice President','Vice-presidente Executivo']],t('<p>Design strategy and culture at the highest level: why project A over project B, why build a team around X. Making sure the team works on the right things, with the right people, in the right ways.</p>','<p>Estratégia e cultura de design no nível mais alto: por que o projeto A e não o B, por que montar um time em torno de X. Garantir que o time trabalhe nas coisas certas, com as pessoas certas, do jeito certo.</p>'))}
+</div>
+<div class="note"><strong>${t('Wielding design influence &amp; understanding how the sausage gets made','Exercer influência de design e entender como a coisa é feita de verdade')}</strong>${t('<p>At this level both tracks meet: real influence over design, plus a working knowledge of how the work actually happens.</p>','<p>Neste nível as duas trilhas se encontram: influência real sobre o design e conhecimento prático de como o trabalho acontece de fato.</p>')}</div>`},
+
+{id:'zone-6',nav:'Zone 6',np:'Zona 6',html:`
+<p class="zl">${t('Zone 6','Zona 6','span')}</p><h2>${t('Business influence','Influência no negócio')}</h2>
+<div class="cdo"><span class="code" aria-hidden="true">CDO</span><h3>${t('Chief Design Officer','Chief Design Officer (Diretor(a)-executivo(a) de Design)')}</h3>
+${t('<p>If a company has a CTO, a CMO or a CPO, it needs a CDO. Accountable for great design execution and given the resources for it. Not about managing people: the CDO fights for design, represents it, and answers directly to the CEO and the Board.</p>','<p>Se a empresa tem CTO, CMO ou CPO, ela precisa de um CDO. Responde pela excelência na execução de design e recebe recursos para isso. Não é sobre gerir pessoas: o CDO defende o design, o representa e responde diretamente ao CEO e ao Conselho.</p>')}</div>
+${t('<p style="margin-top:18px">Both tracks can lead here. At this level the CDO must know design deeply, in craft and in strategy.</p>','<p style="margin-top:18px">As duas trilhas podem chegar aqui. Nesse nível o CDO precisa conhecer design a fundo, no ofício e na estratégia.</p>')}`},
+
+{id:'distinguished',nav:'Distinguished & Fellow',np:'Distinguished e Fellow',html:`
+<p class="zl">${t('Roles','Papéis','span')}</p><h2>${t('What do Distinguished and Fellow designers do?','O que fazem os designers Distinguished e Fellow?')}</h2>
+<div class="grid2">
+<div>${t('<p>Principals show a strong capacity to create; managers, to manage. As managers rise they own more people but get further from design quality, while still being expected to guarantee it.</p><p>Distinguished and Fellow designers fill that gap. In short: <b>Distinguished and Fellow shape how good the work is; Director and VP shape how good the people and organization are.</b></p>','<p>Principals mostram grande capacidade de criar; gestores, de gerir. Ao subir, o gestor cuida de mais pessoas e fica mais longe da qualidade do design, mas ainda é cobrado por ela.</p><p>Distinguished e Fellow preenchem essa lacuna. Em resumo: <b>Distinguished e Fellow cuidam de quão bom é o trabalho; Diretor e VP cuidam de quão boas são as pessoas e a organização.</b></p>')}</div>
+<div class="lane cr"><div class="title">${t('Their toolkit','O kit de ferramentas')}</div><ul>
+<li>${t('Reviewing work in progress and critique','Revisar trabalho em andamento e fazer crítica')}</li>
+<li>${t('Teaching the team, regularly, to improve their craft','Ensinar o time, com regularidade, a melhorar o ofício')}</li>
+<li>${t('Teaching new methods of work and thought','Ensinar novos métodos de trabalho e de pensamento')}</li>
+<li>${t('Upskilling designers on new tools','Capacitar designers em novas ferramentas')}</li>
+<li>${t('Building new tools','Construir novas ferramentas')}</li>
+<li>${t('Senior conceptual thinking and north-star project discovery','Pensamento conceitual sênior e descoberta de projetos north star')}</li>
+</ul></div>
+</div>
+${t('<p style="margin-top:18px">Managers focus on people and structure, DesignOps on systems, and creative people on creativity. The author presents the model as an early proposal to adapt to each business.</p>','<p style="margin-top:18px">Gestores focam em pessoas e estrutura, DesignOps em sistemas, e criativos em criatividade. O autor apresenta o modelo como uma proposta inicial, para ser adaptada a cada empresa.</p>')}`},
+
+{id:'credits',nav:'Credits',np:'Créditos',html:`
+<p class="zl">${t('Source','Fonte','span')}</p><h2>${t('Original work and credit','Obra original e créditos')}</h2>
+${t('<p>The Mirror Model, its structure, level names and chart are by <b>Ryan Ford</b> (©2022). This page is an interactive study guide with bilingual summaries; read the original article for the full text and the high-resolution chart.</p>','<p>O Mirror Model, sua estrutura, nomes de níveis e gráfico são de <b>Ryan Ford</b> (©2022). Esta página é um guia de estudo interativo com resumos bilíngues; leia o artigo original para o texto completo e o gráfico em alta resolução.</p>')}
+<ul>
+<li><a href="https://uxdesign.cc/fixing-product-design-career-paths-with-the-mirror-model-76152b7e547">“Fixing product design career paths with the Mirror Model”</a> — Ryan Ford, UX Collective (Medium), Nov 1, 2022</li>
+<li><a href="https://www.theryanford.com">theryanford.com</a></li>
+<li><a href="https://smart-interface-design-patterns.com/articles/ux-career-level-paths/">Product Designer's Career Paths</a> — Smart Interface Design Patterns</li>
+</ul>
+<p class="small" style="margin-top:18px">${t('Interactive version and Portuguese translation by Jeff Dória.','Versão interativa e tradução para o português por Jeff Dória.')}</p>`}
+];
+
+const track=document.getElementById('track'),rail=document.getElementById('rail');
+track.innerHTML=panels.map((p,i)=>`<section class="panel" id="${p.id}" role="group" aria-roledescription="slide" aria-label="${i+1} / ${panels.length}: ${esc(p.nav)}"><div class="inner">${p.html}</div></section>`).join('');
+rail.innerHTML=panels.map((p,i)=>`<button data-i="${i}" aria-controls="${p.id}">${t(esc(p.nav),esc(p.np),'span')}</button>`).join('');
+const secs=[...track.children],btns=[...rail.children];
+let cur=0;
+const isPT=()=>document.documentElement.dataset.lang==='pt';
+const lab=()=>{document.getElementById('pos').textContent=`${cur+1} / ${secs.length} · ${isPT()?panels[cur].np:panels[cur].nav}`};
+const go=i=>{i=Math.max(0,Math.min(secs.length-1,i));track.scrollTo({left:secs[i].offsetLeft-track.offsetLeft});};
+const mark=i=>{cur=i;btns.forEach((b,j)=>b.setAttribute('aria-current',j===i));btns[i].scrollIntoView({block:'nearest',inline:'nearest'});
+  lab();
+  document.getElementById('prev').disabled=i===0;document.getElementById('next').disabled=i===secs.length-1;
+  document.getElementById('prog').style.width=((i+1)/secs.length*100)+'%';
+  if(location.hash.slice(1)!==panels[i].id)try{history.replaceState(null,'','#'+panels[i].id)}catch(e){}};
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)mark(secs.indexOf(e.target))}),{root:track,threshold:.6});
+secs.forEach(s=>io.observe(s));
+rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(+b.dataset.i)});
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea'))return;if(e.key==='ArrowRight'){e.preventDefault();go(cur+1)}if(e.key==='ArrowLeft'){e.preventDefault();go(cur-1)}});
+const setL=l=>{document.documentElement.dataset.lang=l;document.documentElement.lang=l==='pt'?'pt-BR':'en';
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===l));
+  document.getElementById('prevt').textContent=l==='pt'?'Anterior':'Prev';document.getElementById('nextt').textContent=l==='pt'?'Próximo':'Next';
+  document.getElementById('prev').setAttribute('aria-label',l==='pt'?'Seção anterior':'Previous section');document.getElementById('next').setAttribute('aria-label',l==='pt'?'Próxima seção':'Next section');
+  rail.setAttribute('aria-label',l==='pt'?'Seções':'Sections');if(secs.length)lab();
+  try{localStorage.setItem('mm-lang',l)}catch(e){}};
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>setL(b.dataset.l));
+let saved='en';try{saved=localStorage.getItem('mm-lang')==='pt'?'pt':'en'}catch(e){}
+setL(saved);
+const start=()=>{const h=location.hash.slice(1),i=panels.findIndex(p=>p.id===h);if(i>0){track.style.scrollBehavior='auto';go(i);track.style.scrollBehavior=''}else mark(0)};
+start();
+window.addEventListener('hashchange',()=>{const i=panels.findIndex(p=>p.id===location.hash.slice(1));if(i>=0&&i!==cur)go(i)});
+}
+</script>
+</body>
+</html>
