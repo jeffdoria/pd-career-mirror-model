@@ -34,7 +34,7 @@ header{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2);align-items:center;ju
 .rail button:hover{border-color:var(--mute);color:var(--ink)}
 .rail button[aria-current=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .bar{height:4px;background:var(--soft)}.bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .3s}
-#track{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth}
+#track{scrollbar-width:none;flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth}
 .panel{flex:0 0 100%;scroll-snap-align:start;overflow-y:auto;padding:var(--s4) max(var(--s2),4vw) var(--s5)}
 .inner{max-width:1184px;margin:0 auto}
 .zl{font-size:48px;line-height:48px;color:var(--zone);text-transform:uppercase}
@@ -85,6 +85,18 @@ a{color:var(--blue);text-underline-offset:3px}
 #pos{font-size:14px;color:var(--mute);text-align:center}
 @media(max-width:600px){.brand{font-size:20px;line-height:24px}.panel{padding-top:var(--s3)}.zl{font-size:40px;line-height:40px}h2{font-size:24px;line-height:32px}.lvl{max-width:none}.arrow{display:none}.nav button{padding:var(--s1) var(--s2)}}
 @media(prefers-reduced-motion:reduce){#track{scroll-behavior:auto}.bar i{transition:none}}
+.notice{display:flex;flex-wrap:wrap;gap:0 var(--s1);align-items:center;padding:var(--s1) max(var(--s2),3vw);background:#fff8e1;color:#4a3500;font-size:14px;line-height:24px;border-bottom:1px solid #f0d98c}
+.notice a{color:#4a3500;font-weight:600}
+.hero{margin:0 0 var(--s3)}
+.hero .frame{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
+.hero img{display:block;width:100%;min-width:720px;height:auto}
+.hero figcaption{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2);align-items:center;justify-content:space-between;margin-top:var(--s2);font-size:14px;color:var(--mute)}
+.btns{display:flex;flex-wrap:wrap;gap:var(--s1)}
+.btn{display:inline-flex;align-items:center;gap:var(--s1);min-height:48px;padding:var(--s1) var(--s3);border-radius:8px;font:600 16px/24px Inter,sans-serif;text-decoration:none;border:1px solid var(--blue)}
+.btn.pri{background:var(--blue);color:#fff}.btn.sec{background:#fff;color:var(--blue)}
+.btn:hover{filter:brightness(.95)}
+.author{border-left:4px solid var(--blue);background:var(--soft);border-radius:0 16px 16px 0;padding:var(--s2) var(--s3);margin:var(--s3) 0}
+.author strong{display:block;margin-bottom:var(--s1)}
 </style>
 </head>
 <body>
@@ -96,6 +108,7 @@ a{color:var(--blue);text-underline-offset:3px}
     <button id="l-pt" data-l="pt" lang="pt-BR">PT</button>
   </div>
 </header>
+<div class="notice" role="note"><span class="en">I did not create this model. The Mirror Model is by <strong>Ryan Ford</strong>, published Nov 1, 2022 on UX Collective (Medium).</span><span class="pt">Eu não criei este modelo. O Mirror Model é de <strong>Ryan Ford</strong>, publicado em 1º/11/2022 no UX Collective (Medium).</span> <a href="https://uxdesign.cc/fixing-product-design-career-paths-with-the-mirror-model-76152b7e547"><span class="en">Read the original article ↗</span><span class="pt">Leia o artigo original ↗</span></a></div>
 <nav class="rail" id="rail" aria-label="Sections"></nav>
 <div class="bar" aria-hidden="true"><i id="prog"></i></div>
 <main id="track" tabindex="-1" aria-label="Mirror Model"></main>
@@ -114,13 +127,14 @@ const CR=t('Creative path (IC)','Trilha criativa (IC)'), MG=t('Management path',
 
 const panels=[
 {id:'intro',nav:'Intro',np:'Início',html:`
-<h1 style="font-size:clamp(36px,5.5vw,58px);margin:0 0 12px">${t('Product Design Career Paths: The Mirror Model','Carreiras em Product Design: o Mirror Model')}</h1>
+<figure class="hero">
+<div class="frame" tabindex="0" aria-label="Original chart, scrollable"><img src="assets/mirror-model-ryan-ford-2022.webp" width="4000" height="1812" alt="Original chart by Ryan Ford: Product Design Career Paths, The Mirror Model. Two mirrored tracks across six zones: a creative IC track (Senior PD to Executive PD Fellow) above and a management track (Senior PD to Executive VP) below, both leading to Chief Design Officer."></div>
+<figcaption><span>${t('Original chart © 2022 Ryan Ford, theryanford.com','Gráfico original © 2022 Ryan Ford, theryanford.com','span')}</span>
+<span class="btns"><a class="btn pri" href="assets/mirror-model-ryan-ford-2022.png" download>${t('Download PNG','Baixar PNG','span')}</a><a class="btn sec" href="assets/mirror-model-ryan-ford-2022.webp" download>${t('Download WebP','Baixar WebP','span')}</a><a class="btn sec" href="assets/mirror-model-ryan-ford-2022.webp" target="_blank" rel="noopener">${t('Open full size ↗','Abrir em tamanho real ↗','span')}</a></span></figcaption>
+</figure>
+<h1>${t('Product Design Career Paths: The Mirror Model','Carreiras em Product Design: o Mirror Model')}</h1>
 ${t('<p>A proposal by Ryan Ford (2022) to give creative designers a path to grow that is as long, as senior and as well paid as the management path. The two tracks mirror each other, level for level, all the way to Chief Design Officer.</p>','<p>Uma proposta de Ryan Ford (2022) para dar aos designers criativos um caminho de crescimento tão longo, sênior e bem remunerado quanto o de gestão. As duas trilhas se espelham, nível a nível, até o Chief Design Officer.</p>')}
-<div class="mapw"><div class="map" role="img" aria-label="Overview: creative (IC) and management (M) tracks across six zones, both ending at CDO">
-<div class="h"></div><div class="h">${t('Zone 1','Zona 1','span')}</div><div class="h">${t('Zone 2','Zona 2','span')}</div><div class="h">${t('Zone 3','Zona 3','span')}</div><div class="h">${t('Zone 4','Zona 4','span')}</div><div class="h">${t('Zone 5','Zona 5','span')}</div><div class="h">${t('Zone 6','Zona 6','span')}</div>
-<div class="lab">IC</div><div class="e" style="grid-row:span 2;display:grid;place-items:center">IC-1–4</div><div class="c">IC-5–6</div><div class="c">IC-7–8</div><div class="c">IC-D1–D2</div><div class="c">IC-F1–F3</div><div class="x" style="grid-row:span 2;display:grid;place-items:center">CDO</div>
-<div class="lab">M</div><div class="m">M-1–2</div><div class="m">M-3–4</div><div class="m">M-D1–D2</div><div class="m">M-VP1–3</div>
-</div></div>
+<aside class="author">${t('<strong>A note from the page author, Jeff Dória</strong><p>I come back to this chart all the time, almost every day, and even more now that I am going through a career transition. I built this page so I could walk through it zone by zone in English and in Portuguese, without losing the original terms.</p>','<strong>Uma nota do autor da página, Jeff Dória</strong><p>Eu volto a este gráfico o tempo todo, quase todos os dias, ainda mais agora que estou em transição de carreira. Criei esta página para percorrer o modelo zona por zona, em inglês e em português, sem perder os termos originais.</p>')}</aside>
 ${t('<p class="small">Use the Prev and Next buttons, the section rail, swipe sideways, or the ← → keys. Switch between English and Portuguese at the top. Level names and zone titles follow the original chart; descriptions are summaries, with the full original linked in Credits.</p>','<p class="small">Use os botões Anterior e Próximo, a barra de seções, deslize para o lado ou as teclas ← →. Troque entre inglês e português no topo. Os nomes de níveis e zonas seguem o gráfico original; as descrições são resumos, e o original completo está linkado em Créditos.</p>')}`},
 
 {id:'problem',nav:'Problem',np:'Problema',html:`
@@ -193,10 +207,11 @@ ${t('<p style="margin-top:18px">Managers focus on people and structure, DesignOp
 
 {id:'credits',nav:'Credits',np:'Créditos',html:`
 <p class="zl">${t('Source','Fonte','span')}</p><h2>${t('Original work and credit','Obra original e créditos')}</h2>
-${t('<p>The Mirror Model, its structure, level names and chart are by <b>Ryan Ford</b> (©2022). This page is an interactive study guide with bilingual summaries; read the original article for the full text and the high-resolution chart.</p>','<p>O Mirror Model, sua estrutura, nomes de níveis e gráfico são de <b>Ryan Ford</b> (©2022). Esta página é um guia de estudo interativo com resumos bilíngues; leia o artigo original para o texto completo e o gráfico em alta resolução.</p>')}
+${t('<p>The Mirror Model, its structure, level names and chart are by <b>Ryan Ford</b> (©2022). This page is an interactive study guide with bilingual summaries, shown alongside his original chart; read the original article for the full text and the high-resolution chart.</p>','<p>O Mirror Model, sua estrutura, nomes de níveis e gráfico são de <b>Ryan Ford</b> (©2022). Esta página é um guia de estudo interativo com resumos bilíngues, ao lado do gráfico original dele; leia o artigo original para o texto completo e o gráfico em alta resolução.</p>')}
 <ul>
 <li><a href="https://uxdesign.cc/fixing-product-design-career-paths-with-the-mirror-model-76152b7e547">“Fixing product design career paths with the Mirror Model”</a> — Ryan Ford, UX Collective (Medium), Nov 1, 2022</li>
 <li><a href="https://www.theryanford.com">theryanford.com</a></li>
+<li>${t('Chart image: “Product Design Career Paths: The Mirror Model”, © 2022 Ryan Ford','Imagem do gráfico: “Product Design Career Paths: The Mirror Model”, © 2022 Ryan Ford','span')}</li>
 <li><a href="https://smart-interface-design-patterns.com/articles/ux-career-level-paths/">Product Designer's Career Paths</a> — Smart Interface Design Patterns</li>
 </ul>
 <p class="small" style="margin-top:18px">${t('Interactive version and Portuguese translation by Jeff Dória.','Versão interativa e tradução para o português por Jeff Dória.')}</p>`}
