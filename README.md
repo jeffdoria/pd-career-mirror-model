@@ -11,7 +11,8 @@
 
 This repo is an interactive, bilingual (English / Portuguese) study version of the Mirror Model. I built it because English isn't my first language, and I wanted a way to go through the model zone by zone without losing the original terms or taking anything out of context.
 
-- **Original chart**: Ryan Ford's chart is shown at the top of the page, with download links (`assets/`). It belongs to him and is included here with credit.
+- **Original charts**: Ryan Ford's Mirror Model chart (top of the page) and his "Current Startup Product Design Career Path" chart are shown with credit. Click any chart to zoom in; each caption links to the full-resolution file. The images belong to him.
+- **Startup and enterprise paths**: two extra sections explain why the current paths are broken, before the zones of the Mirror Model.
 - **Horizontal navigation**: one panel per zone, from the shared early career (Zone 1) to the Chief Design Officer (Zone 6). Use the buttons, the section rail, swipe, or the ← → keys.
 - **English / Portuguese switch**: level names and zone titles follow the original chart. Descriptions are short summaries, not the original text.
 - **Deep links**: each section has its own address, e.g. `#zone-4`.

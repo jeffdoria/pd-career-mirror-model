@@ -90,6 +90,19 @@ a{color:var(--blue);text-underline-offset:3px}
 .hero{margin:0 0 var(--s3)}
 .hero .frame{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
 .hero img{display:block;width:100%;min-width:720px;height:auto}
+.zoom{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in}
+.hero figcaption{font-size:14px;line-height:24px;color:var(--mute)}
+.cap a{font-weight:600}
+.tag{display:block;font:600 12px/16px Inter,sans-serif;color:var(--mute);text-transform:uppercase;margin-bottom:4px}
+.lvl.none{--c:#d4e600}.lvl.none .code span{color:#1a1f00}
+.issue{background:#eef2f9;border-radius:16px;padding:var(--s3);margin-top:var(--s3)}
+.issue strong{display:block;font-family:"Barlow Condensed",sans-serif;font-size:24px;line-height:32px;text-transform:uppercase;margin-bottom:var(--s1)}
+dialog.lb{padding:0;border:0;max-width:100vw;max-height:100vh;width:100vw;height:100vh;background:#fff}
+dialog.lb::backdrop{background:rgba(0,0,0,.6)}
+.lb .bar2{position:sticky;top:0;left:0;display:flex;justify-content:space-between;align-items:center;gap:var(--s2);padding:var(--s1) var(--s2);background:var(--blue);color:#fff;font-size:14px}
+.lb .bar2 button{min-height:48px;min-width:48px;padding:var(--s1) var(--s2);border-radius:8px;border:1px solid #fff;background:none;color:#fff;font:600 16px/24px Inter,sans-serif;cursor:pointer}
+.lb .wrap{overflow:auto;height:calc(100vh - 64px)}
+.lb img{display:block;width:auto;max-width:none;height:auto}
 .hero figcaption{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s2);align-items:center;justify-content:space-between;margin-top:var(--s2);font-size:14px;color:var(--mute)}
 .btns{display:flex;flex-wrap:wrap;gap:var(--s1)}
 .btn{display:inline-flex;align-items:center;gap:var(--s1);min-height:48px;padding:var(--s1) var(--s3);border-radius:8px;font:600 16px/24px Inter,sans-serif;text-decoration:none;border:1px solid var(--blue)}
@@ -112,6 +125,7 @@ a{color:var(--blue);text-underline-offset:3px}
 <nav class="rail" id="rail" aria-label="Sections"></nav>
 <div class="bar" aria-hidden="true"><i id="prog"></i></div>
 <main id="track" tabindex="-1" aria-label="Mirror Model"></main>
+<dialog class="lb" id="lb" aria-label="Image viewer"><div class="bar2"><span><span class="en">Scroll to explore. Press Esc to close.</span><span class="pt">Role para explorar. Esc fecha.</span></span><button type="button" id="lbx"><span class="en">Close</span><span class="pt">Fechar</span></button></div><div class="wrap"><img id="lbi" alt=""></div></dialog>
 <div class="nav">
   <button id="prev" aria-label="Previous section">← <span id="prevt">Prev</span></button>
   <div id="pos" aria-live="polite"></div>
@@ -128,9 +142,8 @@ const CR=t('Creative path (IC)','Trilha criativa (IC)'), MG=t('Management path',
 const panels=[
 {id:'intro',nav:'Intro',np:'Início',html:`
 <figure class="hero">
-<div class="frame" tabindex="0" aria-label="Original chart, scrollable"><img src="assets/mirror-model-ryan-ford-2022.webp" width="4000" height="1812" alt="Original chart by Ryan Ford: Product Design Career Paths, The Mirror Model. Two mirrored tracks across six zones: a creative IC track (Senior PD to Executive PD Fellow) above and a management track (Senior PD to Executive VP) below, both leading to Chief Design Officer."></div>
-<figcaption><span>${t('Original chart © 2022 Ryan Ford, theryanford.com','Gráfico original © 2022 Ryan Ford, theryanford.com','span')}</span>
-<span class="btns"><a class="btn pri" href="assets/mirror-model-ryan-ford-2022.png" download>${t('Download PNG','Baixar PNG','span')}</a><a class="btn sec" href="assets/mirror-model-ryan-ford-2022.webp" download>${t('Download WebP','Baixar WebP','span')}</a><a class="btn sec" href="assets/mirror-model-ryan-ford-2022.webp" target="_blank" rel="noopener">${t('Open full size ↗','Abrir em tamanho real ↗','span')}</a></span></figcaption>
+<div class="frame"><button class="zoom" type="button" data-src="assets/mirror-model-ryan-ford-2022.webp" aria-label="Zoom in / Ampliar"><img src="assets/mirror-model-ryan-ford-2022.webp" width="4000" height="1812" alt="Original chart by Ryan Ford: Product Design Career Paths, The Mirror Model. Two mirrored tracks across six zones, a creative IC track above and a management track below, both leading to Chief Design Officer." ></button></div>
+<figcaption class="cap">${t('Click the image above to zoom in. <a href="https://drive.google.com/file/d/1BePJyrd8q0D1mVgIV2h8ghds8IbbyzBR/view?usp=sharing" target="_blank" rel="noopener">Full Resolution ↗</a> · Chart by Ryan Ford, © 2022','Clique na imagem acima para ampliar. <a href="https://drive.google.com/file/d/1BePJyrd8q0D1mVgIV2h8ghds8IbbyzBR/view?usp=sharing" target="_blank" rel="noopener">Resolução completa ↗</a> · Gráfico de Ryan Ford, © 2022','span')}</figcaption>
 </figure>
 <h1>${t('Product Design Career Paths: The Mirror Model','Carreiras em Product Design: o Mirror Model')}</h1>
 ${t('<p>A proposal by Ryan Ford (2022) to give creative designers a path to grow that is as long, as senior and as well paid as the management path. The two tracks mirror each other, level for level, all the way to Chief Design Officer.</p>','<p>Uma proposta de Ryan Ford (2022) para dar aos designers criativos um caminho de crescimento tão longo, sênior e bem remunerado quanto o de gestão. As duas trilhas se espelham, nível a nível, até o Chief Design Officer.</p>')}
@@ -142,6 +155,28 @@ ${t('<p class="small">Use the Prev and Next buttons, the section rail, swipe sid
 <div class="grid2">
 <div>${t('<p>Designers want what any worker wants: new responsibilities, more impact, new challenges and more money. Careers usually split into an Individual Contributor (IC) path and a Manager path.</p><p>The IC path typically stops at <b>Principal</b>. To keep growing, a designer who loves the craft has to stop designing and manage. Many stall, or leave for another company.</p>','<p>Designers querem o que qualquer profissional quer: novas responsabilidades, mais impacto, novos desafios e mais dinheiro. A carreira costuma se dividir em uma trilha de Contribuidor Individual (IC) e uma de Gestão.</p><p>A trilha IC normalmente para no nível <b>Principal</b>. Para continuar crescendo, quem ama o ofício precisa parar de desenhar e virar gestor. Muitos estagnam ou trocam de empresa.</p>')}</div>
 <div>${t('<p><b>Startups:</b> the creative path effectively ends after Senior Principal, because career ladders are usually written by HR and managers, not designers.</p><p><b>Enterprises</b> replace titles with bands (e.g. IC6), but the design track still caps near the same point. Engineering often goes further, with extra senior IC levels for exceptional engineers.</p><p><b>The idea:</b> use engineering career paths as the template for Product Design.</p>','<p><b>Startups:</b> a trilha criativa praticamente termina depois de Senior Principal, porque as trilhas costumam ser escritas por RH e gestores, não por designers.</p><p><b>Grandes empresas</b> trocam cargos por bandas (ex.: IC6), mas a trilha de design ainda trava perto do mesmo ponto. Engenharia muitas vezes vai além, com níveis IC extras para engenheiros excepcionais.</p><p><b>A ideia:</b> usar as trilhas de engenharia como modelo para Product Design.</p>')}</div>
+</div>`},
+
+{id:'startup',nav:'Startups',np:'Startups',html:`
+<p class="zl">${t('Today','Hoje','span')}</p><h2>${t('The broken state of startup career paths','O estado quebrado das trilhas em startups')}</h2>
+<figure class="hero">
+<div class="frame"><button class="zoom" type="button" data-src="assets/startup-career-path-ryan-ford-2022.webp" aria-label="Zoom in / Ampliar"><img src="assets/startup-career-path-ryan-ford-2022.webp" width="4000" height="1854" alt="Chart by Ryan Ford: Current Startup Product Design Career Path. Intern, Jr/Associate PD and Product Designer branch into a creative path that ends at Sr Principal PD followed by Nothing, and a management path that continues up to Chief." loading="lazy"></button></div>
+<figcaption class="cap">${t('Click the image above to zoom in. <a href="https://drive.google.com/file/d/15qMrq6eZJuTuAyEc1Hug1_1ppMyTFfsN/view?usp=sharing" target="_blank" rel="noopener">Full Resolution ↗</a> · Chart by Ryan Ford, © 2022','Clique na imagem acima para ampliar. <a href="https://drive.google.com/file/d/15qMrq6eZJuTuAyEc1Hug1_1ppMyTFfsN/view?usp=sharing" target="_blank" rel="noopener">Resolução completa ↗</a> · Gráfico de Ryan Ford, © 2022','span')}</figcaption>
+</figure>
+${t('<p>How most businesses, especially startups, lay out the path: the template most HR teams have. Labels show how common each role is.</p>','<p>Como a maioria das empresas, principalmente startups, desenha a trilha: o modelo que a maioria dos times de RH tem. As etiquetas mostram o quão comum é cada cargo.</p>')}
+<div class="mirror">
+${lane('cr',CR,t('Path to increasing creative purpose','Caminho de propósito criativo crescente'),[['Senior PD','Typical','Comum'],['Lead/Staff PD','Typical','Comum'],['Principal PD','Typical','Comum'],['Sr Principal PD','Maybe','Talvez'],['Nothing','Typical: no new titles','Comum: nenhum cargo novo','none']],t('<p>The creative track runs out after Sr Principal. Raises may still come, but new titles and room to grow usually do not.</p>','<p>A trilha criativa acaba depois de Sr Principal. Aumentos ainda podem vir, mas novos cargos e espaço para crescer normalmente não.</p>'))}
+<div class="axis">${t('split after Product Designer','separação depois de Product Designer')}</div>
+${lane('mg',MG,t('Path to increasing management responsibilities','Caminho de responsabilidades de gestão crescentes'),[['Senior PD','Typical','Comum'],['Lead/Staff PD','Typical','Comum'],['Manager','Typical','Comum'],['Sr Manager','Typical','Comum'],['Director','Typical','Comum'],['Sr Director','Typical','Comum'],['VP/Head','Maybe','Talvez'],['SVP/Head','Maybe','Talvez'],['EVP','Uncommon','Incomum'],['Chief','Uncommon','Incomum']],t('<p>Management keeps going: from leading a few designers, to managing managers, to design strategy, hiring and culture, and in rare cases a C-suite seat.</p>','<p>A gestão continua: de liderar poucos designers a gerir gestores, depois estratégia, contratação e cultura de design e, em casos raros, uma cadeira no C-level.</p>'))}
+</div>
+<div class="issue"><strong>${t('What’s the issue?','Qual é o problema?','span')}</strong>${t('<p>Product Design runs on taste, skill and the ability to make useful products. Yet many great creative designers are pushed into management right when they start to master the craft, with no creative path beyond Principal.</p>','<p>Product Design depende de gosto, habilidade e capacidade de criar produtos úteis. Mesmo assim, muitos ótimos designers criativos são empurrados para a gestão justo quando começam a dominar o ofício, sem trilha criativa além de Principal.</p>')}</div>`},
+
+{id:'enterprise',nav:'Enterprise',np:'Grandes empresas',html:`
+<p class="zl">${t('Today','Hoje','span')}</p><h2>${t('The broken state of enterprise career paths','O estado quebrado das trilhas em grandes empresas')}</h2>
+<div class="note" style="margin-top:0"><strong>${t('Chart','Gráfico','span')}</strong>${t('<p class="cap">Chart by Ryan Ford, © 2022. <a href="https://drive.google.com/file/d/1utWVMKXbyKqxQO4z9ILaczxV94E0QuHT/view?usp=sharing" target="_blank" rel="noopener">Full Resolution ↗</a></p>','<p class="cap">Gráfico de Ryan Ford, © 2022. <a href="https://drive.google.com/file/d/1utWVMKXbyKqxQO4z9ILaczxV94E0QuHT/view?usp=sharing" target="_blank" rel="noopener">Resolução completa ↗</a></p>')}</div>
+<div class="grid2" style="margin-top:var(--s3)">
+<div>${t('<p>Large companies such as Google, Amazon, Meta and Microsoft replace most titles with bands like IC6. The same band carries the same expectations and pay for engineers, product managers and designers.</p>','<p>Grandes empresas como Google, Amazon, Meta e Microsoft trocam a maioria dos cargos por bandas como IC6. A mesma banda tem as mesmas expectativas e o mesmo salário para engenharia, produto e design.</p>')}</div>
+<div>${t('<p>But the design track still stops near Senior Principal. At Meta, for example, there seems to be no IC9 for designers, while engineers do have one. That gap is what led to using engineering paths as the template for the Mirror Model.</p>','<p>Mas a trilha de design ainda para perto de Senior Principal. Na Meta, por exemplo, parece não existir IC9 para designers, enquanto engenheiros têm. Essa diferença levou a usar as trilhas de engenharia como modelo para o Mirror Model.</p>')}</div>
 </div>`},
 
 {id:'zone-1',nav:'Zone 1',np:'Zona 1',html:`
@@ -211,7 +246,7 @@ ${t('<p>The Mirror Model, its structure, level names and chart are by <b>Ryan Fo
 <ul>
 <li><a href="https://uxdesign.cc/fixing-product-design-career-paths-with-the-mirror-model-76152b7e547">“Fixing product design career paths with the Mirror Model”</a> — Ryan Ford, UX Collective (Medium), Nov 1, 2022</li>
 <li><a href="https://www.theryanford.com">theryanford.com</a></li>
-<li>${t('Chart image: “Product Design Career Paths: The Mirror Model”, © 2022 Ryan Ford','Imagem do gráfico: “Product Design Career Paths: The Mirror Model”, © 2022 Ryan Ford','span')}</li>
+<li>${t('Chart images: “Product Design Career Paths: The Mirror Model” and “Current Startup Product Design Career Path”, © 2022 Ryan Ford','Imagens dos gráficos: “Product Design Career Paths: The Mirror Model” e “Current Startup Product Design Career Path”, © 2022 Ryan Ford','span')}</li>
 <li><a href="https://smart-interface-design-patterns.com/articles/ux-career-level-paths/">Product Designer's Career Paths</a> — Smart Interface Design Patterns</li>
 </ul>
 <p class="small" style="margin-top:18px">${t('Interactive version and Portuguese translation by Jeff Dória.','Versão interativa e tradução para o português por Jeff Dória.')}</p>`}
@@ -233,9 +268,12 @@ const mark=i=>{cur=i;btns.forEach((b,j)=>b.setAttribute('aria-current',j===i));b
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)mark(secs.indexOf(e.target))}),{root:track,threshold:.6});
 secs.forEach(s=>io.observe(s));
 rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(+b.dataset.i)});
+const lb=document.getElementById('lb'),lbi=document.getElementById('lbi');
+track.addEventListener('click',e=>{const z=e.target.closest('.zoom');if(!z)return;lbi.src=z.dataset.src;lbi.alt=z.querySelector('img').alt;if(lb.showModal)lb.showModal();else window.open(z.dataset.src)});
+document.getElementById('lbx').onclick=()=>lb.close();
 document.getElementById('prev').onclick=()=>go(cur-1);
 document.getElementById('next').onclick=()=>go(cur+1);
-document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea'))return;if(e.key==='ArrowRight'){e.preventDefault();go(cur+1)}if(e.key==='ArrowLeft'){e.preventDefault();go(cur-1)}});
+document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea')||lb.open)return;if(e.key==='ArrowRight'){e.preventDefault();go(cur+1)}if(e.key==='ArrowLeft'){e.preventDefault();go(cur-1)}});
 const setL=l=>{document.documentElement.dataset.lang=l;document.documentElement.lang=l==='pt'?'pt-BR':'en';
   document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===l));
   document.getElementById('prevt').textContent=l==='pt'?'Anterior':'Prev';document.getElementById('nextt').textContent=l==='pt'?'Próximo':'Next';
