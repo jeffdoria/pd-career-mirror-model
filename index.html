@@ -146,14 +146,6 @@ dialog.lb::backdrop{background:rgba(0,0,0,.6)}
 .btn:hover{filter:brightness(.95)}
 .author{border-left:4px solid var(--blue);background:var(--soft);border-radius:0 16px 16px 0;padding:var(--s2) var(--s3);margin:var(--s3) 0}
 .author strong{display:block;margin-bottom:var(--s1)}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,264px),1fr));gap:var(--s2)}
-.step{background:#fff;border-radius:16px;padding:var(--s2);display:flex;flex-direction:column;gap:var(--s2)}
-.step p{margin:0;font-size:16px;line-height:24px}
-.step .lv{flex-direction:column;align-items:stretch}
-.step .arrow{display:none}
-.step .lvl{max-width:none;flex:none}
-.step .lvl .code{font-size:20px;line-height:24px}
-.lane.ea .step{background:#fff}
 </style>
 </head>
 <body>
@@ -192,7 +184,6 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const t=(en,pt,tag='span')=>(tag=/^\s*</.test(en)?'div':tag,`<${tag} class="en" lang="en">${en}</${tag}><${tag} class="pt" lang="pt-BR">${pt}</${tag}>`);
 const lvls=(list,cls='')=>`<div class="lv">${list.map((l,i)=>`${i?'<span class="arrow" aria-hidden="true">→</span>':''}<div class="lvl ${l[3]||''}"><span class="code"><span>${l[0]}</span></span><span class="name">${t(l[1],l[2])}</span></div>`).join('')}</div>`;
 const lane=(cls,kind,title,levels,body)=>`<section class="lane ${cls}"><div class="kind">${kind}</div><div class="title">${title}</div>${lvls(levels)}<div>${body}</div></section>`;
-const steps=(cls,kind,title,groups)=>`<section class="lane ${cls}"><div class="kind">${kind}</div><div class="title">${title}</div><div class="steps">${groups.map(gp=>`<div class="step">${lvls(gp[0])}${t('<p>'+gp[1]+'</p>','<p>'+gp[2]+'</p>')}</div>`).join('')}</div></section>`;
 const CR=t('Creative path (IC)','Trilha criativa (IC)'), MG=t('Management path','Trilha de gestão');
 const GL={
 ic:['IC','Individual Contributor: someone who does the hands-on work and does not manage people.','Individual Contributor (contribuidor individual): quem faz o trabalho na prática e não gerencia pessoas. É a trilha de especialista.'],
@@ -250,19 +241,9 @@ ${t('<p class="small">Use the Prev and Next buttons, the section rail, swipe sid
 </figure>
 ${t('<p>How most businesses, especially startups, lay out the path: the template most HR teams have. Labels show how common each role is.</p>','<p>É assim que a maioria das empresas, principalmente startups, monta o plano de carreira: é o modelo que quase todo RH tem em mãos. As etiquetas mostram o quanto cada cargo é comum.</p>')}
 <div class="mirror">
-${steps('ea',t('Shared start','Início em comum'),t('Early career','Início de carreira'),[
-[[['Intern','Uncommon','Raro','in'],['Jr/Associate PD','Typical','Comum'],['Product Designer','Typical','Comum']],'You are still learning the craft, the workflow and what the job involves. Internships are rare here, but entry-level roles are common, and senior designers or managers keep an eye on your work.',`Você ainda está aprendendo o ${g('craft','ofício')}, o fluxo de trabalho e o que a profissão envolve. Estágio é raro, mas vagas de entrada são comuns, e designers mais seniores ou gestores acompanham seu trabalho de perto.`]])}
-${steps('cr',CR,t('Path to increasing creative purpose','Caminho para mais propósito criativo'),[
-[[['Senior PD','Typical','Comum'],['Lead/Staff PD','Typical','Comum']],'You know your craft and want to keep creating; managing people would only get in the way. You may guide junior designers, but you are not their boss.',`Você domina o que faz e quer continuar criando; gerenciar pessoas só atrapalharia. Você pode orientar designers mais juniores, mas não é chefe deles.`],
-[[['Principal PD','Typical','Comum'],['Sr Principal PD','Maybe','Às vezes']],'Now you are one of the most senior designers around. Your whole job is to be creative and deliver great design, every day.',`Agora você está entre os designers mais seniores da empresa. Seu trabalho inteiro é criar e entregar design excelente, todos os dias.`],
-[[['Nothing','Typical','Comum','none']],'Usually the path ends here. Raises can still happen, but there are no new titles and no new room to grow.',`Normalmente a trilha acaba aqui. Ainda pode rolar aumento, mas não existe cargo novo nem espaço para crescer.`]])}
+${lane('cr',CR,t('Path to increasing creative purpose','Caminho para mais propósito criativo'),[['Senior PD','Typical','Comum'],['Lead/Staff PD','Typical','Comum'],['Principal PD','Typical','Comum'],['Sr Principal PD','Maybe','Às vezes'],['Nothing','Typical: no new titles','Comum: nada além disso','none']],t('<p>The creative track runs out after Sr Principal. Raises may still come, but new titles and room to grow usually do not.</p>',`<p>A trilha criativa acaba em Sr ${g('principal')}. Aumento até pode vir, mas cargo novo e espaço para crescer, normalmente não.</p>`))}
 <div class="axis">${t('split after Product Designer','as trilhas se separam depois de Product Designer')}</div>
-${steps('mg',MG,t('Path to increasing management responsibilities','Caminho para mais responsabilidades de gestão'),[
-[[['Senior PD','Typical','Comum'],['Lead/Staff PD','Typical','Comum']],'You know your craft, and your goals point toward managing designers. You still design yourself and help the people you lead do the same.',`Você domina o que faz, e seus objetivos apontam para a gestão de designers. Você ainda põe a mão na massa e ajuda quem você lidera a fazer o mesmo.`],
-[[['Manager','Typical','Comum'],['Sr Manager','Typical','Comum']],'Most of your time goes into managing designers. You review and give feedback, but you rarely have time to design.',`Quase todo o seu tempo vai para gerenciar designers. Você revisa e dá feedback, mas raramente sobra tempo para projetar.`],
-[[['Director','Typical','Comum'],['Sr Director','Typical','Comum']],'You manage managers, plan how the work gets done and set the bar for how design is made and evaluated. Designing yourself becomes rare.',`Você gerencia gerentes, planeja como o trabalho vai acontecer e define o padrão de como o design é feito e avaliado. Projetar com as próprias mãos fica raro.`],
-[[['VP/Head','Maybe','Às vezes'],['SVP/Head','Maybe','Às vezes'],['EVP','Uncommon','Raro']],'Your job is design strategy, hiring, building the department and its culture, and working with other executives. If you are still designing here, the team is probably understaffed.',`Seu trabalho é estratégia de design, contratação, montar o departamento e sua cultura e conversar com outros executivos. Se você ainda está projetando aqui, provavelmente falta gente no time.`],
-[[['Chief','Uncommon','Raro']],'A very rare role, found in companies that understand the business value of design and want it represented at the top.',`Um cargo muito raro, que só existe em empresas que entendem o valor de negócio do design e querem alguém falando por ele no ${g('clevel')}.`]])}
+${lane('mg',MG,t('Path to increasing management responsibilities','Caminho para mais responsabilidades de gestão'),[['Senior PD','Typical','Comum'],['Lead/Staff PD','Typical','Comum'],['Manager','Typical','Comum'],['Sr Manager','Typical','Comum'],['Director','Typical','Comum'],['Sr Director','Typical','Comum'],['VP/Head','Maybe','Às vezes'],['SVP/Head','Maybe','Às vezes'],['EVP','Uncommon','Raro'],['Chief','Uncommon','Raro']],t('<p>Management keeps going: from leading a few designers, to managing managers, to design strategy, hiring and culture, and in rare cases a C-suite seat.</p>',`<p>A gestão segue subindo: de liderar poucos designers a gerenciar gerentes, depois cuidar de estratégia, contratações e cultura de design e, em casos raros, chegar ao ${g('clevel')}.</p>`))}
 </div>
 <div class="issue"><strong>${t('What’s the issue?','Qual é o problema?','span')}</strong>${t('<p>Product Design runs on taste, skill and the ability to make useful products. Yet many great creative designers are pushed into management right when they start to master the craft, with no creative path beyond Principal.</p>',`<p>Product Design depende de repertório, habilidade e capacidade de criar produtos que as pessoas conseguem usar. Mesmo assim, muitos designers excelentes são empurrados para a gestão justo quando começam a dominar o ${g('craft','ofício')}, porque não existe trilha criativa depois de ${g('principal')}.</p>`)}</div>`},
 
