@@ -73,10 +73,10 @@ p{margin:0 0 var(--s2);max-width:68ch}
 .lane .title{font-size:24px;line-height:32px;text-transform:uppercase}
 .cr .title{color:var(--cr)}.mg .title{color:var(--mg-t)}.ea .title{color:var(--blue)}
 .lv{display:flex;flex-wrap:wrap;gap:var(--s1);align-items:center}
-.lvl{display:flex;flex-direction:column;border-radius:8px;flex:1 1 144px;max-width:232px;border:2px solid var(--c);background:#fff}
+.lvl{display:flex;flex-direction:column;border-radius:8px;flex:1 0 auto;min-width:144px;max-width:none;border:2px solid var(--c);background:#fff}
 .cr .lvl{--c:var(--cr)}.mg .lvl{--c:var(--mg)}.ea .lvl{--c:var(--blue)}.ea .lvl.in{--c:var(--green)}
 .lvl .code{border-radius:6px 6px 0 0;padding:var(--s1) var(--s2);font-size:24px;line-height:32px;color:#fff;background:var(--c)}
-.lvl .code span{color:#fff}
+.lvl .code span{color:#fff;white-space:nowrap}
 .mg .lvl .code span{color:var(--mg-ink)}
 .lvl .name{padding:var(--s1) var(--s2);font:600 14px/24px Inter,sans-serif;color:var(--ink)}
 .arrow{color:var(--mute);font-weight:700}
@@ -147,8 +147,9 @@ dialog.lb::backdrop{background:rgba(0,0,0,.6)}
 .author{border-left:4px solid var(--blue);background:var(--soft);border-radius:0 16px 16px 0;padding:var(--s2) var(--s3);margin:var(--s3) 0}
 .author strong{display:block;margin-bottom:var(--s1)}
 .lvl.has-tip{position:relative;cursor:help}
-.lvl.has-tip .code{display:flex;align-items:center;justify-content:space-between;gap:var(--s1)}
-.info{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;border:2px solid currentColor;font:700 14px/1 Inter,sans-serif;flex:none}
+.info{position:absolute;top:-12px;right:-12px;z-index:2;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.25);font:700 13px/1 Inter,sans-serif}
+.mg .info{color:var(--mg-ink)}.lvl.none .info{color:#1a1f00}
+.lv{padding-top:4px}
 .lvl.has-tip:hover .tip,.lvl.has-tip:focus .tip{display:block}
 .balloon{top:calc(100% + 12px)}
 .balloon::before{content:"";position:absolute;top:-6px;left:24px;width:12px;height:12px;background:#242424;transform:rotate(45deg)}
@@ -190,7 +191,7 @@ dialog.lb::backdrop{background:rgba(0,0,0,.6)}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const t=(en,pt,tag='span')=>(tag=/^\s*</.test(en)?'div':tag,`<${tag} class="en" lang="en">${en}</${tag}><${tag} class="pt" lang="pt-BR">${pt}</${tag}>`);
 let bid=0;
-const lvls=(list,cls='')=>`<div class="lv">${list.map((l,i)=>{const tp=l[4];const id=tp?'b'+(++bid):'';return `${i?'<span class="arrow" aria-hidden="true">→</span>':''}<div class="lvl ${l[3]||''}${tp?' has-tip':''}"${tp?` tabindex="0" aria-describedby="${id}"`:''}><span class="code"><span>${l[0]}</span>${tp?'<span class="info" aria-hidden="true">i</span>':''}</span><span class="name">${t(l[1],l[2])}</span>${tp?`<span class="tip balloon" role="tooltip" id="${id}"><span class="en">${tp[0]}</span><span class="pt">${tp[1]}</span></span>`:''}</div>`}).join('')}</div>`;
+const lvls=(list,cls='')=>`<div class="lv">${list.map((l,i)=>{const tp=l[4];const id=tp?'b'+(++bid):'';return `${i?'<span class="arrow" aria-hidden="true">→</span>':''}<div class="lvl ${l[3]||''}${tp?' has-tip':''}"${tp?` tabindex="0" aria-describedby="${id}"`:''}><span class="code"><span>${l[0]}</span></span>${tp?'<span class="info" aria-hidden="true">i</span>':''}<span class="name">${t(l[1],l[2])}</span>${tp?`<span class="tip balloon" role="tooltip" id="${id}"><span class="en">${tp[0]}</span><span class="pt">${tp[1]}</span></span>`:''}</div>`}).join('')}</div>`;
 const lane=(cls,kind,title,levels,body)=>`<section class="lane ${cls}"><div class="kind">${kind}</div><div class="title">${title}</div>${lvls(levels)}<div>${body}</div></section>`;
 const CR=t('Creative path (IC)','Trilha criativa (IC)'), MG=t('Management path','Trilha de gestão');
 const GL={
