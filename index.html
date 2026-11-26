@@ -73,7 +73,7 @@ p{margin:0 0 var(--s2);max-width:68ch}
 .lane .title{font-size:24px;line-height:32px;text-transform:uppercase}
 .cr .title{color:var(--cr)}.mg .title{color:var(--mg-t)}.ea .title{color:var(--blue)}
 .lv{display:flex;flex-wrap:wrap;gap:var(--s1);align-items:center}
-.lvl{display:flex;flex-direction:column;border-radius:8px;flex:1 0 auto;min-width:144px;max-width:none;border:2px solid var(--c);background:#fff}
+.lvl{display:flex;flex-direction:column;border-radius:8px;flex:0 0 auto;min-width:176px;max-width:none;border:2px solid var(--c);background:#fff}
 .cr .lvl{--c:var(--cr)}.mg .lvl{--c:var(--mg)}.ea .lvl{--c:var(--blue)}.ea .lvl.in{--c:var(--green)}
 .lvl .code{border-radius:6px 6px 0 0;padding:var(--s1) var(--s2);font-size:24px;line-height:32px;color:#fff;background:var(--c)}
 .lvl .code span{color:#fff;white-space:nowrap}
@@ -100,7 +100,7 @@ a{color:var(--blue);text-underline-offset:3px}
 .nav button:hover:not(:disabled){border-color:var(--ink)}
 .nav button:disabled{opacity:.4;cursor:not-allowed}
 #pos{font-size:14px;color:var(--mute);text-align:center}
-@media(max-width:600px){.brand{font-size:20px;line-height:24px}.panel{padding-top:var(--s3)}.zl{font-size:40px;line-height:40px}h2{font-size:24px;line-height:32px}.lvl{max-width:none}.arrow{display:none}.nav button{padding:var(--s1) var(--s2)}}
+@media(max-width:600px){.brand{font-size:20px;line-height:24px}.panel{padding-top:var(--s3)}.zl{font-size:40px;line-height:40px}h2{font-size:24px;line-height:32px}.lvl{max-width:none;flex:1 1 100%}.arrow{display:none}.nav button{padding:var(--s1) var(--s2)}}
 @media(prefers-reduced-motion:reduce){#track{scroll-behavior:auto}.bar i{transition:none}}
 .notice{display:flex;flex-wrap:wrap;gap:0 var(--s1);align-items:center;padding:var(--s1) max(var(--s2),3vw);background:#fff8e1;color:#4a3500;font-size:14px;line-height:24px;border-bottom:1px solid #f0d98c}
 .notice a{color:#4a3500;font-weight:600}
@@ -154,6 +154,11 @@ dialog.lb::backdrop{background:rgba(0,0,0,.6)}
 .balloon{top:calc(100% + 12px)}
 .balloon::before{content:"";position:absolute;top:-6px;left:24px;width:12px;height:12px;background:#242424;transform:rotate(45deg)}
 .lvl.r .balloon{left:auto;right:0}.lvl.r .balloon::before{left:auto;right:24px}
+.lane .title{margin-bottom:calc(var(--s1) * -1)}
+.lane .desc p{margin:0}
+.lane .desc p+p{margin-top:var(--s1)}
+.notice .short{display:none}
+@media(max-width:600px){.notice .short{display:inline}.notice .long{display:none}}
 </style>
 </head>
 <body>
@@ -165,7 +170,7 @@ dialog.lb::backdrop{background:rgba(0,0,0,.6)}
     <button id="l-pt" data-l="pt" lang="pt-BR">PT</button>
   </div>
 </header>
-<div class="notice" role="note"><span class="en">I did not create this model. The Mirror Model is by <strong>Ryan Ford</strong>, published Nov 1, 2022 on UX Collective (Medium).</span><span class="pt">Eu não criei este modelo. O Mirror Model é de <strong>Ryan Ford</strong>, publicado em 1º/11/2022 no UX Collective (Medium).</span> <a href="https://uxdesign.cc/fixing-product-design-career-paths-with-the-mirror-model-76152b7e547"><span class="en">Read the original article ↗</span><span class="pt">Leia o artigo original ↗</span></a></div>
+<div class="notice" role="note"><span class="short"><span class="en">Model by <strong>Ryan Ford</strong> (2022), not by me.</span><span class="pt">Modelo de <strong>Ryan Ford</strong> (2022), não é meu.</span></span><span class="long"><span class="en">I did not create this model. The Mirror Model is by <strong>Ryan Ford</strong>, published Nov 1, 2022 on UX Collective (Medium).</span><span class="pt">Eu não criei este modelo. O Mirror Model é de <strong>Ryan Ford</strong>, publicado em 1º/11/2022 no UX Collective (Medium).</span></span> <a href="https://uxdesign.cc/fixing-product-design-career-paths-with-the-mirror-model-76152b7e547"><span class="en">Read the original article ↗</span><span class="pt">Leia o artigo original ↗</span></a></div>
 <nav class="rail" id="rail" aria-label="Sections"></nav>
 <div class="bar" aria-hidden="true"><i id="prog"></i></div>
 <main id="track" tabindex="-1" aria-label="Mirror Model"></main>
@@ -192,7 +197,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const t=(en,pt,tag='span')=>(tag=/^\s*</.test(en)?'div':tag,`<${tag} class="en" lang="en">${en}</${tag}><${tag} class="pt" lang="pt-BR">${pt}</${tag}>`);
 let bid=0;
 const lvls=(list,cls='')=>`<div class="lv">${list.map((l,i)=>{const tp=l[4];const id=tp?'b'+(++bid):'';return `${i?'<span class="arrow" aria-hidden="true">→</span>':''}<div class="lvl ${l[3]||''}${tp?' has-tip':''}"${tp?` tabindex="0" aria-describedby="${id}"`:''}><span class="code"><span>${l[0]}</span></span>${tp?'<span class="info" aria-hidden="true">i</span>':''}<span class="name">${t(l[1],l[2])}</span>${tp?`<span class="tip balloon" role="tooltip" id="${id}"><span class="en">${tp[0]}</span><span class="pt">${tp[1]}</span></span>`:''}</div>`}).join('')}</div>`;
-const lane=(cls,kind,title,levels,body)=>`<section class="lane ${cls}"><div class="kind">${kind}</div><div class="title">${title}</div>${lvls(levels)}<div>${body}</div></section>`;
+const lane=(cls,kind,title,levels,body)=>`<section class="lane ${cls}"><div class="kind">${kind}</div><div class="title">${title}</div><div class="desc">${body}</div>${lvls(levels)}</section>`;
 const CR=t('Creative path (IC)','Trilha criativa (IC)'), MG=t('Management path','Trilha de gestão');
 const GL={
 ic:['IC','Individual Contributor: someone who does the hands-on work and does not manage people.','Individual Contributor (contribuidor individual): quem faz o trabalho na prática e não gerencia pessoas. É a trilha de especialista.'],
